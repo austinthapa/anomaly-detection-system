@@ -1,0 +1,67 @@
+features:
+  numeric:
+    - Age
+    - Number of Children
+    - Income
+
+  onehot:
+    - Marital Status
+    - Smoking Status
+    - Physical Activity Level
+
+  ordinal:
+    - Education Level
+    - Alcohol Consumption
+    - Dietary Habits
+    - Sleep Patterns
+
+  binary:
+    - Employment Status
+    - History of Mental Illness
+    - History of Substance Abuse
+    - Family History of Depression
+    - Chronic Medical Conditions
+
+drop_columns:
+  - Name
+
+ordinal_categories:
+  Education Level:
+    - High School
+    - Associate Degree
+    - Bachelor's Degree
+    - Master's Degree
+    - PhD
+  Alcohol Consumption:
+    - Low
+    - Moderate
+    - High
+  Dietary Habits:
+    - Unhealthy
+    - Moderate
+    - Healthy
+  Sleep Patterns:
+    - Poor
+    - Fair
+    - Good
+
+binary_mappings:
+  Employment Status:
+    Unemployed: 0
+    Employed: 1
+
+  History of Mental Illness:
+    "Yes": 1
+    "No": 0
+  
+  History of Substance Abuse:
+    "Yes": 1
+    "No": 0
+  
+  Family History of Depression:
+    "Yes": 1
+    "No": 0
+  
+  Chronic Medical Conditions:
+    "Yes": 1
+    "No": 0
