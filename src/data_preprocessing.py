@@ -87,6 +87,35 @@ def load_data(
         logger.info(f"Unexpected Error occured while loading: {e}", exc_info=True)
         raise
     
+def drop_metadata_features(
+    df: DataFrame,
+    metadata_cols: list
+):
+    """
+    Drop metadata columns from the DataFrame.
+    
+    Args:
+        df (DataFrame): The input pandas DataFrame.
+        metadata_cols (list): The list of meta-data columns.
+    
+    Returns:
+        DataFrame: DataFrame with dropped metadata columns.
+    
+    Raises:
+        Exception: If dropping columns fails.
+    """
+    try:
+        missing_cols = [col for col in metadata_cols if col not in df.columns]
+        if missing_cols:
+            logger.error(f"Missing metadata columns: {missing_cols}")
+            raise ValueError(f"Missing metadata columns: {missing_cols}")
+        df = df.drop(metadata_cols, axis=1)
+        logger.info(f"Successfully droped meta-data columns: {metadata_cols}")
+        return df 
+    except Exception as e:
+        logger.error(f"Error while dropping meta-data features: {e}", exc_info=True)
+        raise
+    
 def scale_numeric_features(
     df: DataFrame,
     num_cols: list,
@@ -318,6 +347,12 @@ def main():
     # Step 1: Load the data
     data_path = Path("data/raw/train.csv")
     df = load_data(data_path=data_path)
+    
+    metadata_cols = config["features"]["metadata_columns"]
+    df = drop_metadata_features(
+        df=df,
+        metadata_cols=metadata_cols
+    )
     
     # Step 2: Scale the numeric features
     num_cols = config["features"]["numeric"]
