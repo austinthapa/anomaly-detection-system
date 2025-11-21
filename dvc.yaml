@@ -14,3 +14,11 @@ stages:
       - data/raw/train.csv
     outs:
       - data/clean
+  
+  model_training:
+    cmd: python src/model_train.py
+    deps:
+      - src/model_train.py
+      - data/clean/train.csv
+    outs:
+      - mlruns/
