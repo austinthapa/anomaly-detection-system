@@ -120,7 +120,7 @@ def scale_numeric_features(
     df: DataFrame,
     num_cols: list,
     scaler_save_path: Path
-) -> Tuple[DataFrame, str]:
+) -> DataFrame:
     """
     Scale the numeric features
     
@@ -142,7 +142,7 @@ def scale_numeric_features(
                     f"{num_cols}")
 
         scaler = StandardScaler()
-        df.loc[:, num_cols] = scaler.fit_transform(df[num_cols])
+        df[num_cols] = scaler.fit_transform(df[num_cols])
         logger.info("Successfully completed numeric features.")
         
         joblib.dump(scaler, scaler_save_path / "scaler.joblib")
@@ -150,7 +150,7 @@ def scale_numeric_features(
         return df
     except Exception as e:
         logger.error(f"Unexpected error occurred: {e}", exc_info=True)
-        raise  
+        raise
 
 def onehot_encode_features(
     df: DataFrame,
