@@ -1,0 +1,8 @@
+data:
+  raw_data_path: "data/raw"
+  clean_data_path: "data/clean"
+model_artifacts:
+  scaler_path: "artifacts/scaler.joblib"
+  onehot_encoder_path: "artifacts/onehot_encoder.joblib"
+  ordinal_encoder_path: "artifacts/ordinal_encoder.joblib"
+  binary_encoder_path: "artifacts/binary_encoder.joblib"
