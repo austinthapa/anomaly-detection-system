@@ -22,8 +22,8 @@ features:
     - Family History of Depression
     - Chronic Medical Conditions
 
-drop_columns:
-  - Name
+  metadata_columns:
+    - Name
 
 ordinal_categories:
   Education Level:
