@@ -68,7 +68,7 @@ def load_data(
     """
     if not data_path.exists():
         logger.error(f"File not found at given location: {data_path}")
-        raise ValueError(f"File not found at given location: {data_path}")
+        raise FileNotFoundError(f"File not found at given location: {data_path}")
     try:
         logger.info(f"Loading the data from {data_path}")
         df = pd.read_csv(data_path)
