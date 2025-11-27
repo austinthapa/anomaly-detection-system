@@ -114,7 +114,7 @@ def train_model(
         
         model.fit(df)
         
-        joblib.dump(model, "artifacts/model.joblib")
+        # joblib.dump(model, "artifacts/model.joblib")
         
         logger.info("Model Trained Successfully")
         return model
