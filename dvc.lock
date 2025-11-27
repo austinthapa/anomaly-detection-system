@@ -1,0 +1,53 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/data_ingestion.py
+    deps:
+    - path: data/depression_data.csv
+      hash: md5
+      md5: 5f29a867109a179fa0f6ad688aea7f9e
+      size: 47294385
+    - path: src/data_ingestion.py
+      hash: md5
+      md5: d85f35fa4f65ba1a64a064bf5ee70221
+      size: 5850
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 6a8965f730e1daed89637bb76108c8ef.dir
+      size: 46880898
+      nfiles: 2
+  data_preprocessing:
+    cmd: python src/data_preprocessing.py
+    deps:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 9a4ba73ece9ecf2eb92ca813b885b208
+      size: 37504460
+    - path: src/data_preprocessing.py
+      hash: md5
+      md5: d88a6bd55f36b252afddecd9df001e99
+      size: 13426
+    outs:
+    - path: data/clean
+      hash: md5
+      md5: 9f26ca5b0b84cc217eb71a9ddfe9ef73.dir
+      size: 41391613
+      nfiles: 1
+  model_training:
+    cmd: python src/model_train.py
+    deps:
+    - path: data/clean/train.csv
+      hash: md5
+      md5: 1f20b48a4890d096336726bedc84c480
+      size: 41391613
+    - path: src/model_train.py
+      hash: md5
+      md5: c87c6cfe073475f69c0bf841b332d809
+      size: 8319
+    outs:
+    - path: mlruns/
+      hash: md5
+      md5: e8363833725e9f713f38763a7408bca2.dir
+      size: 2130925
+      nfiles: 48
