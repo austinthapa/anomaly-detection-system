@@ -1,6 +1,7 @@
 import logging
 import mlflow
 import yaml
+import joblib
 import numpy as np
 import pandas as pd
 
@@ -66,7 +67,7 @@ def load_preprocessed_data(
         ValueError: If the loaded DataFrame is empty.
         Exception: For all other unrelated exceptions.
     """
-    data_path = Path(data_path) / "train.csv"
+    data_path = Path(data_path)
     if not data_path.exists():
         logger.error(f"No file found at given location: {data_path}")
         raise FileNotFoundError(f"No file found at given location: {data_path}")
@@ -112,6 +113,8 @@ def train_model(
         model = IsolationForest(**model_params)
         
         model.fit(df)
+        
+        joblib.dump(model, "artifacts/model.joblib")
         
         logger.info("Model Trained Successfully")
         return model
