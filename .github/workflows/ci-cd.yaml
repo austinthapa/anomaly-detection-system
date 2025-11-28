@@ -1,37 +1,72 @@
 name: CI-CD Workflow
 
 on:
-    push:
-        branches: ["main"]
-    pull_request:
-        branches: ["main"]
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
-    build-test-deploy:
-        runs-on: ubuntu-latest
+  build-test-deploy:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
+    steps:
+      # Step 1: Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-            - name: Set up python
-              uses: actions/setup-python@v5
-              with:
-                  python-version: "3.10"
+      # Step 2: Set up Python
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
-            - name: Cache pip dependencies
-              uses: actions/cache@v3
-              with:
-                  path: ~/.cache/pip
-                  key: ${{ runner.os }}-python-${{ hashFiles('**/requirements.txt') }}
-                  restore-keys: |
-                      ${{ runner.os }}-python-
+      # Step 3: Cache dependencies
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-python-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-
 
-            - name: Install dependencies
-              run: |
-                  pip install --upgrade pip
-                  pip install -r requirements.txt
-                  pip install pytest
+      # Step 4: Install dependencies and run tests
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
 
-            - name: Run tests
-              run: pytest
+      # Step 5: Run tests
+      - name: Run tests
+        run: pytest
+
+      # Step 6: Install Docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-actions@v3
+
+      # Step 7: Build Docker image
+      - name: Build Docker Image
+        run: |
+          docker build -t anomaly-detection:${{ github.sha }} .
+          docker tag anomaly-detection:${{ github.sha }} anomaly-detection:latest
+
+      # Step 8: Log into AWS ECR
+      - name: Log into AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # Step 9: Tag Docker image with ECR repository URI
+      - name: Tag Docker Image for ECR
+        run: |
+          docker tag anomaly-detection:${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:${{ github.sha }}
+          docker tag anomaly-detection:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:latest
+
+      # Step 10: Push Docker image to ECR
+      - name: Push Docker Images to ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:latest
