@@ -41,9 +41,11 @@ jobs:
       - name: Run tests
         run: pytest
 
-      # Step 6: Install Docker
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-actions@v3
+        # Step 6: Install Docker
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
       # Step 7: Build Docker image
       - name: Build Docker Image
