@@ -45,6 +45,7 @@ jobs:
       - name: Install Docker
         run: |
           sudo apt-get update
+          sudo apt-get remove -y containerd  # Remove conflicting containerd package
           sudo apt-get install -y docker.io
 
       # Step 7: Build Docker image
