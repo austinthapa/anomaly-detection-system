@@ -41,12 +41,9 @@ jobs:
       - name: Run tests
         run: pytest
 
-        # Step 6: Install Docker
-      - name: Install Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get remove -y containerd  # Remove conflicting containerd package
-          sudo apt-get install -y docker.io
+      # Step 6: Verify Docker
+      - name: Verify Docker
+        run: docker --version
 
       # Step 7: Build Docker image
       - name: Build Docker Image
@@ -54,11 +51,11 @@ jobs:
           docker build -t anomaly-detection:${{ github.sha }} .
           docker tag anomaly-detection:${{ github.sha }} anomaly-detection:latest
 
-      # Step 8: Log into AWS ECR
-      - name: Log into AWS ECR
-        uses: aws-actions/amazon-ecr-login@v1
+      # Step 8: Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
