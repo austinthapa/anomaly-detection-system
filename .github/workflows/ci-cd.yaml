@@ -59,13 +59,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Step 9: Tag Docker image with ECR repository URI
+      # Step 9: Authenticate Docker to ECR
+      - name: Authenticate Docker to ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+      # Step 10: Tag Docker image with ECR repository URI
       - name: Tag Docker Image for ECR
         run: |
           docker tag anomaly-detection:${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:${{ github.sha }}
           docker tag anomaly-detection:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:latest
 
-      # Step 10: Push Docker image to ECR
+      # Step 11: Push Docker image to ECR
       - name: Push Docker Images to ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:${{ github.sha }}
